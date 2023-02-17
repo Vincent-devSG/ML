@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 name_file = './data_lab1.txt'
-
 columns = ['x', 'y']
 data_in = pd.read_csv(name_file,
                       names=columns,
