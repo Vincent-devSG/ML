@@ -34,10 +34,11 @@ f = e[1]
 
 g = e[:, 0]
 
-print('hello')
+print(x)
 plt.figure(num=0, dpi=120)
 plt.plot(x, y)
 plt.title("plot")
 plt.xlabel('x')
 plt.ylabel('y')
 plt.show()
+print(x)
