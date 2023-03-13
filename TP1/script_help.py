@@ -12,6 +12,7 @@ data_in.plot(kind='scatter', x='x', y='y', color='red')
 
 x = np.asarray(data_in['x'])
 y = np.asarray(data_in['y'])
+print(x)
 
 plt.figure(5)
 plt.plot(x, y, 'ro')
