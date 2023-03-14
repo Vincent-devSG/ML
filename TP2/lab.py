@@ -16,7 +16,7 @@ y = np.asarray(data_in['y'])
 
 def FFNN():
     # Define the size of inputs, outputs and hidden
-    input_size = 2
+    #input_size = 2
     output_size = 3
     hidden_size = 4  # We did choose this
 
@@ -32,13 +32,15 @@ def FFNN():
     # Define iteration counter
     itera = 0
 
+    X = np.vstack((x1, x2))
     Y = generateY(y)
-    V, W = generateVW(input_size, output_size, hidden_size)
+    V, W = generateVW(X, output_size, hidden_size)
+    print(W)
     Xbar = generateXbar(x1, x2)
 
     while(abs(delta_E) > epsilon):
         itera += 1
-        FWP(V, Xbar)
+        FWP(V, W, Xbar)
 
 
 def generateY(y):
@@ -58,7 +60,8 @@ def generateY(y):
     return Y
 
 
-def generateVW(input_size, output_size, hidden_size):
+def generateVW(X, output_size, hidden_size):
+    input_size = X.shape[1]
     V = np.random.randn(hidden_size, input_size + 1)
     W = np.random.randn(output_size, hidden_size + 1)
     return V, W
@@ -66,18 +69,20 @@ def generateVW(input_size, output_size, hidden_size):
 
 def generateXbar(x1, x2):
     X = np.vstack((x1, x2))
-    Xbar = []
-    for i in range(len(X)):
-        xbar = X[i].tolist()
-        xbar.insert(0, 1)
-        Xbar.append(xbar)
-    return np.array(Xbar)
+    Xbar = np.empty((X.shape[0], X.shape[1]+1))
+    Xbar[:, 0] = 1
+    Xbar[:, 1:] = X
+    return Xbar
 
 
-def FWP(V, Xbar):
-    #XbarTranspose = np.transpose(Xbar)
-    Xbarbar = np.dot(Xbar, np.transpose(V))
+def FWP(V, W, Xbar):
+    XbarTranspose = np.transpose(Xbar)
+    Xbarbar = np.dot(V, XbarTranspose)
     F = 1 / (1 + np.exp(-Xbarbar))
+    Fbar = np.vstack((np.ones((1, F.shape[1])), F))
+    FbarTranspose = np.transpose(Fbar)
+    Fbarbar = np.dot(W, FbarTranspose)
+
 
 FFNN()
 
