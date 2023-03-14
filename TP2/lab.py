@@ -25,7 +25,7 @@ def FFNN():
     alpha2 = 1e-3
 
     # Define convergence criteria
-    epsilon = 10
+    epsilon = 0.001
     E = 1e5
     pE = E
     delta_E = 1e5
@@ -33,6 +33,7 @@ def FFNN():
     # Define iteration counter
     itera = 0
 
+    # Create X, Y, V, W and Xbar | INITIAL
     X = np.hstack((x1.reshape(-1, 1), x2.reshape(-1, 1)))
     Y = generateY(y)
     V, W = generateVW(input_size, output_size, hidden_size)
@@ -44,8 +45,9 @@ def FFNN():
         V, W = BWP(V, W, Xbar, Y, G, Fbar, F, alpha1, alpha2)
         delta_E = E - pE
         pE = E
-        print("Error", E)
+        print("itera: ", itera, "Error", E)
         print("delta Error", delta_E)
+
 
 
 def generateY(y):
@@ -70,8 +72,9 @@ def generateXbar(X):
     return Xbar
 
 
-def FWP(V, W, Xbar, Y):
+def FWP(V, W, Xbar, Y): # Forward propagation
     # XbarTranspose = np.transpose(Xbar)
+    # Calculate X bar bar
     Xbarbar = np.matmul(Xbar, V)
     F = 1 / (1 + np.exp(-Xbarbar))
 
@@ -80,14 +83,16 @@ def FWP(V, W, Xbar, Y):
     Fbar = np.concatenate((ones, F), axis=1)
 
     # FbarTranspose = np.transpose(Fbar)
+    # Calculate F bar bar
     Fbarbar = np.matmul(Fbar, W)
 
+    # Apply the signoid to find G and E
     G = 1 / (1 + np.exp(-Fbarbar))
     E = (1 / 2) * np.sum((G - Y) ** 2)
     return E, G, Fbarbar, Xbarbar, Fbar, F
 
 
-def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2):
+def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2): # backward propagation
     # calculate the new matrix W
     dG = (G - Y) * G * (1 - G)
     dW = alpha_1 * np.matmul(Fbar.T, dG)

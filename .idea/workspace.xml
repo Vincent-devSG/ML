@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fa088dc8-f3e6-4729-9ea8-b7a2e0567fe1" name="Changes" comment="feat: Lab 1 - BGD">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TP2/lab.py" beforeDir="false" afterPath="$PROJECT_DIR$/TP2/lab.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +121,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="feat: Lab 1 - BGD" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ML$lab.coverage" NAME="lab Coverage Results" MODIFIED="1678804118869" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP2" />
+    <SUITE FILE_PATH="coverage/ML$lab.coverage" NAME="lab Coverage Results" MODIFIED="1678807879119" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP2" />
     <SUITE FILE_PATH="coverage/ML$script_help.coverage" NAME="script_help Coverage Results" MODIFIED="1676649617698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1" />
   </component>
 </project>
