@@ -1,4 +1,5 @@
 # importing useful library
+import math
 
 import numpy as np
 import pandas as pd
@@ -25,7 +26,7 @@ def FFNN():
     alpha2 = 1e-3
 
     # Define convergence criteria
-    epsilon = 0.001
+    epsilon = 0.0000001
     E = 1e5
     pE = E
     delta_E = 1e5
@@ -39,15 +40,47 @@ def FFNN():
     V, W = generateVW(input_size, output_size, hidden_size)
     Xbar = generateXbar(X)
 
+    errors = []  # list to store error values
+    d_errors = []
+    iterations = []  # list to store iteration numbers
+
     while (abs(delta_E) > epsilon):
         itera += 1
         E, G, Fbarbar, Xbarbar, Fbar, F = FWP(V, W, Xbar, Y)
         V, W = BWP(V, W, Xbar, Y, G, Fbar, F, alpha1, alpha2)
         delta_E = E - pE
         pE = E
+        errors.append(E)  # add error value to the errors list
+        d_errors.append(delta_E)
+        iterations.append(itera)  # add iteration number to the iterations list
         print("itera: ", itera, "Error", E)
         print("delta Error", delta_E)
 
+    errors = np.array(errors)
+    # d_errors = np.array(d_errors)
+    iterations = np.array(iterations)
+
+    # Create a line plot
+    plt.plot(iterations, errors, color='blue')
+
+    # Add labels and title
+    plt.xlabel('Iterations')
+    plt.ylabel('Errors')
+    plt.title('Error vs. Iterations')
+
+    # Show the plot
+    plt.show()
+
+    print(G)
+    Y_hat = calculateYhat(G)
+
+    print(np.array_equal(y, Y_hat))
+
+    #print("Y array:")
+    #print(Y)
+    #print("Y hat array:")
+    #print(Y)
+    #print(np.array_equal(Y, Y_hat))
 
 
 def generateY(y):
@@ -72,7 +105,7 @@ def generateXbar(X):
     return Xbar
 
 
-def FWP(V, W, Xbar, Y): # Forward propagation
+def FWP(V, W, Xbar, Y):  # Forward propagation
     # XbarTranspose = np.transpose(Xbar)
     # Calculate X bar bar
     Xbarbar = np.matmul(Xbar, V)
@@ -92,7 +125,7 @@ def FWP(V, W, Xbar, Y): # Forward propagation
     return E, G, Fbarbar, Xbarbar, Fbar, F
 
 
-def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2): # backward propagation
+def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2):  # backward propagation
     # calculate the new matrix W
     dG = (G - Y) * G * (1 - G)
     dW = alpha_1 * np.matmul(Fbar.T, dG)
@@ -106,5 +139,10 @@ def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2): # backward propagation
 
     return V, W
 
+
+def calculateYhat(G):
+    Y_hat = np.argmax(G, axis=1)
+    print(Y_hat)
+    return Y_hat
 
 FFNN()
