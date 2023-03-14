@@ -16,8 +16,8 @@ y = np.asarray(data_in['y'])
 
 def FFNN():
     # Define the size of inputs, outputs and hidden
-    #input_size = 2
-    output_size = 3
+    input_size = 71  # nb of lines N
+    output_size = 1  # nb of output y
     hidden_size = 4  # We did choose this
 
     # Define learning rates
@@ -38,7 +38,7 @@ def FFNN():
     print(W)
     Xbar = generateXbar(x1, x2)
 
-    while(abs(delta_E) > epsilon):
+    while (abs(delta_E) > epsilon):
         itera += 1
         FWP(V, W, Xbar)
 
@@ -69,7 +69,7 @@ def generateVW(X, output_size, hidden_size):
 
 def generateXbar(x1, x2):
     X = np.vstack((x1, x2))
-    Xbar = np.empty((X.shape[0], X.shape[1]+1))
+    Xbar = np.empty((X.shape[0], X.shape[1] + 1))
     Xbar[:, 0] = 1
     Xbar[:, 1:] = X
     return Xbar
@@ -85,6 +85,3 @@ def FWP(V, W, Xbar):
 
 
 FFNN()
-
-
-
