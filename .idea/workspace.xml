@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fa088dc8-f3e6-4729-9ea8-b7a2e0567fe1" name="Changes" comment="feat: Lab 1 - BGD">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TP2/lab.py" beforeDir="false" afterPath="$PROJECT_DIR$/TP2/lab.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +40,7 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -91,6 +90,9 @@
       <workItem from="1676649363984" duration="1303000" />
       <workItem from="1678740065646" duration="8102000" />
       <workItem from="1678749349151" duration="3586000" />
+      <workItem from="1678783923736" duration="392000" />
+      <workItem from="1678826078490" duration="75000" />
+      <workItem from="1678826160707" duration="22000" />
     </task>
     <task id="LOCAL-00001" summary="feat: Lab 1 - BGD">
       <created>1676666690740</created>
