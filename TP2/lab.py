@@ -16,8 +16,8 @@ y = np.asarray(data_in['y'])
 
 def FFNN():
     # Define the size of inputs, outputs and hidden
-    input_size = 71  # nb of lines N
-    output_size = 1  # nb of output y
+    input_size = 2  # nb of col input x1, x2
+    output_size = 3  # nb of different value output y
     hidden_size = 4  # We did choose this
 
     # Define learning rates
@@ -27,61 +27,80 @@ def FFNN():
     # Define convergence criteria
     epsilon = 10
     E = 1e5
+    pE = E
     delta_E = 1e5
 
     # Define iteration counter
     itera = 0
 
-    X = np.vstack((x1, x2))
+    X = np.hstack((x1.reshape(-1, 1), x2.reshape(-1, 1)))
     Y = generateY(y)
-    V, W = generateVW(X, output_size, hidden_size)
-    print(W)
-    Xbar = generateXbar(x1, x2)
+    V, W = generateVW(input_size, output_size, hidden_size)
+    Xbar = generateXbar(X)
 
     while (abs(delta_E) > epsilon):
         itera += 1
-        FWP(V, W, Xbar)
+        E, G, Fbarbar, Xbarbar, Fbar, F = FWP(V, W, Xbar, Y)
+        V, W = BWP(V, W, Xbar, Y, G, Fbar, F, alpha1, alpha2)
+        delta_E = E - pE
+        pE = E
+        print("Error", E)
+        print("delta Error", delta_E)
+
 
 
 def generateY(y):
-    outputs = []
-    for elem in y:
-        if elem not in outputs:
-            outputs.append(elem)
-
-    Y = [[0 for j in range(len(y))] for i in range(len(outputs))]
-
-    for i in range(0, len(outputs)):
-        for j in range(0, len(y)):
-            if y[j] == i:
-                Y[i][j] = 1
-            else:
-                Y[i][j] = 0
+    Y = np.zeros((y.shape[0], 3))
+    for i in range(y.shape[0]):
+        Y[i, int(y[i])] = 1
     return Y
 
 
-def generateVW(X, output_size, hidden_size):
-    input_size = X.shape[1]
-    V = np.random.randn(hidden_size, input_size + 1)
-    W = np.random.randn(output_size, hidden_size + 1)
+def generateVW(input_size, output_size, hidden_size):
+    V = np.random.rand(input_size + 1, hidden_size)
+    W = np.random.rand(hidden_size + 1, output_size)
+
     return V, W
 
 
-def generateXbar(x1, x2):
-    X = np.vstack((x1, x2))
-    Xbar = np.empty((X.shape[0], X.shape[1] + 1))
-    Xbar[:, 0] = 1
-    Xbar[:, 1:] = X
+def generateXbar(X):
+    # Create a matrix of ones with the same number of rows as X
+    ones = np.ones((X.shape[0], 1))
+
+    # Concatenate the matrix of ones with X along the second axis
+    Xbar = np.concatenate((ones, X), axis=1)
     return Xbar
 
 
-def FWP(V, W, Xbar):
-    XbarTranspose = np.transpose(Xbar)
-    Xbarbar = np.dot(V, XbarTranspose)
-    F = 1 / (1 + np.exp(-Xbarbar))
-    Fbar = np.vstack((np.ones((1, F.shape[1])), F))
-    FbarTranspose = np.transpose(Fbar)
-    Fbarbar = np.dot(W, FbarTranspose)
 
+def FWP(V, W, Xbar, Y):
+    #XbarTranspose = np.transpose(Xbar)
+    Xbarbar = np.matmul(Xbar, V)
+    F = 1 / (1 + np.exp(-Xbarbar))
+
+    #Create Fbar
+    ones = np.ones((F.shape[0], 1))
+    Fbar = np.concatenate((ones, F), axis=1)
+
+    #FbarTranspose = np.transpose(Fbar)
+    Fbarbar = np.matmul(Fbar, W)
+
+    G = 1 / (1 + np.exp(-Fbarbar))
+    E = (1/2) * np.sum((G - Y)**2)
+    return E, G, Fbarbar, Xbarbar, Fbar, F
+
+def BWP(V, W, Xbar, Y, G, Fbar, F,alpha_1 ,alpha_2):
+    #calculate the new matrix W
+    dG = (G - Y) * G * (1 - G)
+    dW = alpha_1 * np.matmul(Fbar.T, dG)
+    W -= dW
+
+    #Calculate the new matrix V
+    dFbar = np.matmul(dG, W.T)
+    dF = dFbar[:, 1:] * F * (1 - F)
+    dV = alpha_2 * np.matmul(Xbar.T, dF)
+    V -= dV
+
+    return V, W
 
 FFNN()
