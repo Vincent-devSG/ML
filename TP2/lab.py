@@ -4,6 +4,9 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
+
+start_time = time.time()
 
 # Read the data...
 name_file = './data_ffnn_3classes.txt'
@@ -53,8 +56,10 @@ def FFNN():
         errors.append(E)  # add error value to the errors list
         d_errors.append(delta_E)
         iterations.append(itera)  # add iteration number to the iterations list
-        print("itera: ", itera, "Error", E)
-        print("delta Error", delta_E)
+
+        if itera % 100000 == 0:
+            print("itera: ", itera, "Error", E)
+            print("delta Error", delta_E)
 
     errors = np.array(errors)
     # d_errors = np.array(d_errors)
@@ -71,16 +76,16 @@ def FFNN():
     # Show the plot
     plt.show()
 
-    print(G)
-    Y_hat = calculateYhat(G)
+    print("Last itera :", itera)
 
+    print("   ---------------------------------------------   ")
+    print("                     Matrix Y-hat:                 ")
+    Y_hat = calculateYhat(G)
+    print(Y_hat)
+    print("Are the y matrix and Y_hat matrix equals ? :")
     print(np.array_equal(y, Y_hat))
 
-    #print("Y array:")
-    #print(Y)
-    #print("Y hat array:")
-    #print(Y)
-    #print(np.array_equal(Y, Y_hat))
+
 
 
 def generateY(y):
@@ -142,7 +147,7 @@ def BWP(V, W, Xbar, Y, G, Fbar, F, alpha_1, alpha_2):  # backward propagation
 
 def calculateYhat(G):
     Y_hat = np.argmax(G, axis=1)
-    print(Y_hat)
     return Y_hat
 
 FFNN()
+print("--- %s seconds ---" % (time.time() - start_time))
