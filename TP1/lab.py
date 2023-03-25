@@ -2,98 +2,202 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # We read the file and store into an array the data
+filenameData70 = 'data_lab1_70.txt'
+filenameData30 = 'data_lab1_30.txt'
 
-input_data = []
-output_data = []
-data = []
-training_data = []
-test_data = []
-file = open('data_lab1.txt', 'r')
+columns = ['x', 'y']
+data70Point = pd.read_csv(filenameData70,
+                          names=columns,
+                          sep=' ')
 
-# initialize values
-theta = np.random.rand(2)
-error = pow(10, 3)
-gradiant_error = pow(10, 3)
-epsilon = 10
-it = 0
-learning_rate = pow(10, -3)
+x = np.asarray(data70Point['x'])
+y = np.asarray(data70Point['y'])
 
-for line in file:
-    input_output = line.strip().split()
-    input_value = float(input_output[0])
-    output_value = float(input_output[1])
-    input_data.append(input_value)
-    output_data.append(output_value)
-    data.append((input_value, output_value))
 
-break_line = int(len(data) * 0.7)
-training_data = data[:break_line]
-test_data = data[break_line:]
+# We define the function SSE
+def SSE(x, y, theta):
+    return sum((theta[0] + theta[1] * x - y) ** 2)
 
-x_train = []
-y_train = []
 
-for i in range(0, len(training_data)):
-    x_train.append(training_data[i][0])
-    y_train.append(training_data[i][1])
+def BatchGradientDescent(x, y):  # BGD
 
-x_test = []
-y_test = []
-print(training_data[4][1])
+    # Init parameters
+    THETA = np.random.rand(2)
+    ERROR = 10e3
+    old_ERROR = 10e3
+    d_ERROR = 10e3
+    EPSILON = 10e-5
+    iteration = 0
+    learning_rate = 10e-2
 
-for i in range(0, len(test_data)):
-    x_test.append(test_data[i][0])
-    y_test.append(test_data[i][1])
+    # Repeat until convergence
+    while d_ERROR > EPSILON:
+        # Calculate the new value of THETA
+        THETA[0] = THETA[0] - learning_rate * (1 / len(x)) * sum((THETA[0] + THETA[1] * x - y))
+        THETA[1] = THETA[1] - learning_rate * (1 / len(x)) * sum((THETA[0] + THETA[1] * x - y) * x)
 
-plt.figure(5)
-plt.plot(x_train, y_train)
-plt.title("training data")
-plt.xlabel("Input data")
-plt.ylabel("Output data")
+        # Calculate the new value of ERROR
+        ERROR = SSE(x, y, THETA)
+
+        # Calculate the new value of d_ERROR
+        d_ERROR = abs(ERROR - old_ERROR)
+
+        # Update the value of ERROR
+        old_ERROR = ERROR
+
+        # Update the value of iteration
+        iteration = iteration + 1
+
+    return THETA, iteration
+
+
+def StochasticGradientDescent(x, y):  # SGD
+
+    # Init parameters
+    THETA = np.random.rand(2)
+    ERROR = 10e3
+    old_ERROR = 10e3
+    d_ERROR = 10e3
+    EPSILON = 10e-5
+    iteration = 0
+    learning_rate = 10e-3
+
+    # Repeat until convergence
+    while d_ERROR > EPSILON:
+
+        # Calculate the new value of THETA
+        for j in range(2):
+            random_index = np.random.randint(0, len(x))
+            THETA[j] = THETA[j] - learning_rate * (1 / len(x)) * sum((THETA[0] + THETA[1] * x - y) * x)
+
+        # Calculate the new value of ERROR
+        ERROR = SSE(x, y, THETA)
+
+        # Calculate the new value of d_ERROR
+        d_ERROR = abs(ERROR - old_ERROR)
+
+        # Update the value of ERROR
+        old_ERROR = ERROR
+
+        # Update the value of iteration
+        iteration = iteration + 1
+
+    return THETA, iteration
+
+
+def ClosedFormSolution(x, y):  # CFS
+
+    # Init parameters
+    THETA = np.random.rand(2)
+    ERROR = 10e3
+    old_ERROR = 10e3
+    d_ERROR = 10e3
+    EPSILON = 10e-5
+    iteration = 0
+    learning_rate = 10e-2
+
+    # Calculate the new value of THETA
+    THETA[1] = sum((x - np.mean(x)) * (y - np.mean(y))) / sum((x - np.mean(x)) ** 2)
+    THETA[0] = np.mean(y) - THETA[1] * np.mean(x)
+
+    # Calculate the new value of ERROR
+    ERROR = SSE(x, y, THETA)
+
+    # Calculate the new value of d_ERROR
+    d_ERROR = abs(ERROR - old_ERROR)
+
+    # Update the value of ERROR
+    old_ERROR = ERROR
+
+    # Update the value of iteration
+    iteration = iteration + 1
+
+    return THETA, iteration
+
+
+# We call the function BatchGradientDescent and we print the result
+THETA, iteration = BatchGradientDescent(x, y)
+print("THETA = ", THETA)
+print("iteration = ", iteration)
+
+# Test the model with the data of 30%
+data30Point = pd.read_csv(filenameData30, names=columns, sep=' ')
+x2 = np.asarray(data30Point['x'])
+y2 = np.asarray(data30Point['y'])
+
+Y_PREDICTED = np.array([])
+for i in range(len(x2)):
+    Y_PREDICTED = np.append(Y_PREDICTED, [0] + THETA[1] * x2[i])
+
+# Plot the input data, the model and the trained data, the Y_PREDICTED (thin dotted orange line)
+plt.plot(x, y, 'bo', label='Input data')
+plt.plot(x, THETA[0] + THETA[1] * x, 'r', label='Model')
+plt.plot(x2, y2, 'go', label='Trained data')
+plt.plot(x2, Y_PREDICTED, color='orange', ls='--', label='Y_PREDICTED')
+
+# The legend contains the number of iteration
+plt.legend(loc='upper left', title='Iteration: ' + str(iteration))
+
+# The title of the plot
+plt.title('Batch Gradient Descent')
 plt.show()
 
-plt.plot(x_test, y_test)
-plt.title("test data")
-plt.xlabel("Input data")
-plt.ylabel("Output data")
+
+# We call the function StochasticGradientDescent and we print the result
+THETA, iteration = StochasticGradientDescent(x, y)
+print("THETA = ", THETA)
+print("iteration = ", iteration)
+
+# Test the model with the data of 30%
+data30Point = pd.read_csv(filenameData30, names=columns, sep=' ')
+x2 = np.asarray(data30Point['x'])
+y2 = np.asarray(data30Point['y'])
+
+Y_PREDICTED = np.array([])
+for i in range(len(x2)):
+    Y_PREDICTED = np.append(Y_PREDICTED, [0] + THETA[1] * x2[i])
+
+# Plot the input data, the model and the trained data, the Y_PREDICTED (thin dotted orange line)
+plt.plot(x, y, 'bo', label='Input data')
+plt.plot(x, THETA[0] + THETA[1] * x, 'r', label='Model')
+plt.plot(x2, y2, 'go', label='Trained data')
+plt.plot(x2, Y_PREDICTED, color='orange', ls='--', label='Y_PREDICTED')
+
+# The legend contains the number of iteration
+plt.legend(loc='upper left', title='Iteration: ' + str(iteration))
+
+# The title of the plot
+plt.title('Stochastic Gradient Descent')
 plt.show()
 
+# We call the function ClosedFormSolution and we print the result
 
-while abs(gradiant_error) > epsilon:
-    it += 1
+THETA, iteration = ClosedFormSolution(x, y)
+print("THETA = ", THETA)
+print("iteration = ", iteration)
 
-    for n in range(2):
-        sum = 0
-        for i in range(len(x_train)):
-            value_x = x_train[i]
-            value_y = y_train[i]
-            if n == 0:
-                sum += (theta[0] + theta[1] * value_x - value_y)
-            elif n == 1:
-                sum += (theta[0] + theta[1] * value_x - value_y) * value_x
+# Test the model with the data of 30%
+data30Point = pd.read_csv(filenameData30, names=columns, sep=' ')
+x2 = np.asarray(data30Point['x'])
+y2 = np.asarray(data30Point['y'])
 
-        theta[n] = theta[n] - learning_rate * (1.0 / len(x_train)) * sum
+Y_PREDICTED = np.array([])
+for i in range(len(x2)):
+    Y_PREDICTED = np.append(Y_PREDICTED, [0] + THETA[1] * x2[i])
 
-sse = 0
-for i in range(len(x_train)):
-    x_value = x_train[i]
-    y_value = y_train[i]
-    sse += (theta[0] + theta[1]*x_value - y_value)**2
 
-mse = sse / (2*len(x_train))
+# Plot the input data, the model and the trained data, the Y_PREDICTED (thin dotted orange line)
+plt.plot(x, y, 'bo', label='Input data')
+plt.plot(x, THETA[0] + THETA[1] * x, 'r', label='Model')
+plt.plot(x2, y2, 'go', label='Trained data')
+plt.plot(x2, Y_PREDICTED, color='orange', ls='--', label='Y_PREDICTED')
 
-if it > 1:
-    delta_error = abs(mse - prev_mse)
-else:
-    delta_error = np.inf  # set delta_error to infinity for the first iteration
-prev_mse = mse  # store the current MSE as prev_MSE for the next iteration
+# The legend contains the number of iteration
+plt.legend(loc='upper left', title='Iteration: ' + str(iteration))
 
-if it == 1:
-    prev_mse = mse
-else:
-    prev_mse = curr_mse
-mse_history.append(mse)
-curr_mse = sse(training_data, theta)
-delta_mse = abs(curr_mse - prev_mse)
+# The title of the plot
+plt.title('Closed Form Solution')
+plt.show()
