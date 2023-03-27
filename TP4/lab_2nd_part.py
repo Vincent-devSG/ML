@@ -36,17 +36,26 @@ def PCA():
     # Compute the covariance matrix
     X_centered_cov = 1 / len(x) * np.dot(X_centered, X_centered.T)
 
-    # Compute the P-largest eigen vectors of the covariance matrix
+    # Compute the P-largest eigen vectors of the covariance matrix (P = 1)
     eigen_values, eigen_vectors = np.linalg.eig(X_centered_cov)
 
-    # Project X_centered onto mu_p (eigen vectors)
-    Y_projected = np.dot(eigen_vectors.T, X_centered)
+    # We chose P = 1
+    P = 1
 
-    # Represent Y_projected on the N-dimensional space
-    plt.figure()
-    plt.plot(Y_projected[0], Y_projected[1], 'ro')
-    plt.title('PCA')
-    plt.show()
+    #  Sort the eigen values in descending order
+    eigen_values_sorted = np.sort(eigen_values)[::-1]
+
+    # Sort the eigen vectors in descending order
+    eigen_vectors_sorted = eigen_vectors[:, eigen_values.argsort()[::-1]]
+
+    # Keep the P-largest eigen vectors
+    eigen_vectors = eigen_vectors_sorted[:, :P]
+
+    # Project X_centered onto mu_p (eigen vectors)
+    Y_projected = np.dot(X_centered.T, eigen_vectors)
+
+    print(Y_projected.shape)
+    print(Y_projected)
 
 
 PCA()
