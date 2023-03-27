@@ -75,7 +75,29 @@ centroids, cluster = K_means(x, y, epsilon, nb_centroids)
 plt.figure()
 plt.scatter(x, y, c=cluster, cmap='rainbow')
 plt.scatter(centroids[:, 0], centroids[:, 1], c='black')
+
+
+# Testing the model with new data (10 random points min=min(x) max=max(x))
+data_test = np.zeros((10, 2))
+for i in range(10):
+    data_test[i][0] = np.random.uniform(min(x), max(x))
+    data_test[i][1] = np.random.uniform(min(y), max(y))
+
+# Calculate the distance between each point and each centroid
+distance = np.zeros((len(data_test), nb_centroids))
+for i in range(len(data_test)):
+    for j in range(nb_centroids):
+        distance[i][j] = np.linalg.norm(data_test[i] - centroids[j])
+
+# Assign each point to the closest centroid (index of the nearest centroid)
+cluster = np.zeros(len(data_test))
+for i in range(len(data_test)):
+    cluster[i] = np.argmin(distance[i])
+
+# add the new data to the plot (new data are cross and the color is the same as the cluster)
+plt.scatter(data_test[:, 0], data_test[:, 1], c=cluster, cmap='rainbow', marker='x')
 plt.show()
+
 
 print(" centroids = \n", centroids)  # print the centroids
 
